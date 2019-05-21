@@ -1,0 +1,259 @@
+@prefix: animate-router;
+
+.iosApp {
+  .animate-r-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+
+    .animate-r-container {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      /** START: 自定义进场动画 **/
+      &.@{prefix}-forward-enter {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      &.@{prefix}-forward-enter-active {
+        opacity: 1;
+        transform: translateX(0);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+      }
+
+      &.@{prefix}-forward-exit {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      &.@{prefix}-forward-exit-active {
+        opacity: 0;
+        transform: translateX(-30%);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+      }
+
+      /** START: 自定义出场动画 **/
+      &.@{prefix}-backward-enter {
+        opacity: 0;
+        transform: translateX(-30%);
+      }
+
+      &.@{prefix}-backward-enter-active {
+        opacity: 1;
+        transform: translateX(0);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+      }
+
+      &.@{prefix}-backward-exit {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      &.@{prefix}-backward-exit-active {
+        opacity: 0;
+        transform: translateX(100%);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+      }
+    }
+  }
+}
+
+.androidApp {
+  .animate-r-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+
+    .animate-r-container {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      /** START: 自定义进场动画 **/
+      &.@{prefix}-forward-enter {
+        transform: translate3d(0, 40px, 0);
+        opacity: 0;
+        z-index: 3;
+      }
+
+      &.@{prefix}-forward-enter-active {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+        pointer-events: none;
+      }
+
+      &.@{prefix}-forward-exit {
+        opacity: 1;
+        z-index: 2;
+        transform: translate3d(0, 0, 0);
+      }
+
+      &.@{prefix}-forward-exit-active {
+      }
+
+      /** START: 自定义出场动画 **/
+      &.@{prefix}-backward-enter {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+
+      &.@{prefix}-backward-enter-active {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+      }
+
+      &.@{prefix}-backward-exit {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+
+      &.@{prefix}-backward-exit-active {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+        transition: opacity 0.15s linear, transform 0.15s linear;
+      }
+    }
+  }
+}
+
+// default
+// .animate-r-wrapper {
+//   position: absolute;
+//   top: 0;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   overflow: hidden;
+
+//   .animate-r-container {
+//     position: absolute;
+//     top: 0;
+//     bottom: 0;
+//     left: 0;
+//     right: 0;
+
+//     /** START: 自定义进场动画 **/
+//     &.@{prefix}-forward-enter {
+//       opacity: 0;
+//       //transform: translateX(100%);
+//     }
+
+//     &.@{prefix}-forward-enter-active {
+//       opacity: 1;
+//       //transform: translateX(0);
+//       transition: opacity .15s linear, transform .15s linear;
+//     }
+
+//     &.@{prefix}-forward-exit {
+//       opacity: 1;
+//       //transform: translateX(0);
+//     }
+
+//     &.@{prefix}-forward-exit-active {
+//       opacity: 0;
+//       //transform: translateX(-30%);
+//       transition: opacity .15s linear, transform .15s linear;
+//     }
+
+//     /** START: 自定义出场动画 **/
+//     &.@{prefix}-backward-enter {
+//       opacity: 0;
+//       //transform: translateX(-30%);
+//     }
+
+//     &.@{prefix}-backward-enter-active {
+//       opacity: 1;
+//       //transform: translateX(0);
+//       transition: opacity .15s linear, transform .15s linear;
+//     }
+
+//     &.@{prefix}-backward-exit {
+//       opacity: 1;
+//       //transform: translateX(0);
+//     }
+
+//     &.@{prefix}-backward-exit-active {
+//       opacity: 0;
+//       //transform: translateX(100%);
+//       transition: opacity .15s linear, transform .15s linear;
+//     }
+//   }
+// }
+
+// 示例使用 ios 动画
+.animate-r-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+
+  .animate-r-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    /** START: 自定义进场动画 **/
+    &.@{prefix}-forward-enter {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+
+    &.@{prefix}-forward-enter-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.15s linear, transform 0.15s linear;
+    }
+
+    &.@{prefix}-forward-exit {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    &.@{prefix}-forward-exit-active {
+      opacity: 0;
+      transform: translateX(-30%);
+      transition: opacity 0.15s linear, transform 0.15s linear;
+    }
+
+    /** START: 自定义出场动画 **/
+    &.@{prefix}-backward-enter {
+      opacity: 0;
+      transform: translateX(-30%);
+    }
+
+    &.@{prefix}-backward-enter-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.15s linear, transform 0.15s linear;
+    }
+
+    &.@{prefix}-backward-exit {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    &.@{prefix}-backward-exit-active {
+      opacity: 0;
+      transform: translateX(100%);
+      transition: opacity 0.15s linear, transform 0.15s linear;
+    }
+  }
+}
