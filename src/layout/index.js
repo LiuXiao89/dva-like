@@ -1,14 +1,14 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
-import {useRouter} from './hooks/use-router';
-import Animate from './components/animate-router';
+import {useRouter} from 'src/hooks/use-router';
+import Animate from 'src/components/animate-router';
 
-import Page1 from './pages/page1';
-import Page2 from './pages/page2';
-import Page3 from './pages/page3';
-import Page4 from './pages/page4';
+import Page1 from 'src/pages/page1';
+import Page2 from 'src/pages/page2';
+import Page3 from 'src/pages/page3';
+import Page4 from 'src/pages/page4';
 
-import './app.less';
+import './style.less';
 
 // layout
 const App = () => {

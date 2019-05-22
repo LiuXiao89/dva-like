@@ -1,5 +1,6 @@
 import React, {useContext, useReducer} from 'react';
-import {reducer, store, checkAsyncAction} from './reducers';
+import {reducer, reducers, effects, store, checkAsyncAction} from './reducers';
+import {splitAction} from './utils';
 
 const content = {}; // 内部使用
 
@@ -29,19 +30,41 @@ const dvaDispatch = action => {
   const asyncAction = checkAsyncAction(type);
 
   if (!asyncAction) {
+    // 同步操作, 直接调用 dispatch (reducers)
     return dispatch(action);
   } else {
     // 异步操作 略过 reducer
+    // 注入加工过的 put call, 由该副作用主动调用 dispatch
+    // 如果本地有同名函数, 先调用本地, 然后全局, 最后抛错
     const [namespace] = type.split('/');
 
-    const put = (payload) => {
+    const put = (ac) => {
+      const isLocalReducer = reducers[namespace][ac.type];
+
       dispatch({
-        ...payload,
-        type: `${namespace}/${payload.type}`,
+        ...ac,
+        type: isLocalReducer ? `${namespace}/${ac.type}` : ac.type,
       });
     };
 
-    return asyncAction({put}, action);
+    const call = (ac) => {
+      const [n, t] = splitAction(ac);
+      const localEffect = effects[namespace][ac.type];
+
+      if (localEffect) return localEffect({put, call}, ac);
+
+      const globalEffect = effects[n] && effects[n][t];
+
+      if (globalEffect) return globalEffect({put, call}, ac);
+
+      throw new Error(`can't find effect '${ac.type}'.
+                        namespace: '${namespace}',
+                        action: ${JSON.stringify(action)},
+                        subAction: ${JSON.stringify(ac)}
+                        `);
+    };
+
+    return asyncAction({put, call}, action);
   }
 };
 

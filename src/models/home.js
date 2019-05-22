@@ -34,7 +34,7 @@ const model = {
 
           put({
             type: 'set',
-            payload: resp.data,
+            payload: {list: resp.data},
           });
 
           res(resp);

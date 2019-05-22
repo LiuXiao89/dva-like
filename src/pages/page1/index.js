@@ -17,6 +17,20 @@ export default () => {
     <div className={'page1'}>
       page1!;
 
+      <br/>
+
+      登录的同时会触发 [home model](另外的model) 拉列表的操作
+
+      <br/>
+      以及 [global model](本地model) 获取其他数据的操作
+
+      <br/>
+      还有 [global model](本地model) 数量加1操作
+
+      <br/>
+
+      <br/>
+
       {isFetchLogin && <div className={'shadow'} />}
 
       {
@@ -39,6 +53,8 @@ export default () => {
               dispatch({
                 type: 'global/login',
                 payload: {user, pwd},
+              }).then(loginRes => {
+                console.log('登录结果', loginRes);
               });
             }}
             >点我登录
@@ -46,6 +62,10 @@ export default () => {
           </div> :
           <div>切换账号</div>
       }
+
+      <br/>
+
+      global count: {global.count}
 
     </div>
   );

@@ -6,12 +6,10 @@ const model = {
     count: 1,
   },
   reducers: {
-    set: (state, action) => {
-      console.log('dynamic set');
+    set(state, action) {
       return ({...state, ...action.payload});
     },
-    add: state => {
-      console.log('dynamic add');
+    add(state) {
       return ({...state, count: state.count + 1});
     },
   },

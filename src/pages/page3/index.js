@@ -10,6 +10,7 @@ export default () => {
 
   const {list, isFetching} = home;
 
+
   return (
     <div>
 

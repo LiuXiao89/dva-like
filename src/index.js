@@ -1,20 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
+import Layout from 'src/layout';
 
-import {CustomRouter} from './hooks/use-router';
+import {CustomRouter} from 'src/hooks/use-router';
 
-import {model, start} from './dva-like';
-import models from './models';
+import {model, start} from 'src/dva-like';
+import models from 'src/models';
 
 models.forEach(item => model(item));
 
 const Main = start(() => (
   <CustomRouter>
-    <App />
+    <Layout />
   </CustomRouter>
 ));
-
 
 ReactDOM.render(
   <Main/>,

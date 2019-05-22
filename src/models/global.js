@@ -25,7 +25,7 @@ export default {
   },
 
   effects: {
-    async login({put}, {payload}) {
+    async login({put, call}, {payload}) {
       put({type: 'set', payload: {isFetchLogin: true}});
 
       const resp = await new Promise((res) => {
@@ -38,8 +38,15 @@ export default {
         }, 200);
       });
 
-      put({type: 'set', payload: {isFetchLogin: false}});
+      const list = await call({type: 'home/getList'});
 
+      console.log('异步调用其他effects 完毕', list);
+
+      const localRes = await call({type: 'getSth', payload: resp.code});
+
+      console.log('异步调用本地effects 完毕', localRes);
+
+      put({type: 'set', payload: {isFetchLogin: false}});
 
       resp.code === 0 && put({
         type: 'set',
@@ -48,6 +55,18 @@ export default {
           userName: payload.user,
         },
       });
+
+      return resp;
+    },
+
+    async getSth({put}, {payload}) {
+      const resp = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(payload === 0 ? '获取完毕' : '登录失败, 不能获取');
+        }, 150);
+      });
+
+      put({type: 'increase'});
 
       return resp;
     },

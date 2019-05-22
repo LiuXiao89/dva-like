@@ -8,14 +8,16 @@ const notifyConnects = (nextState) => {
   observe.forEach((cb) => cb(nextState));
 };
 
+// 使用本地维护的 store 来进行数据连接
+// 如果使用 reducer, 那么需要连接store... 就白连接了
 const useConnect = (mapFunction) => {
   const partialStore = mapFunction(store);
   const [partial, setPartial] = useState(partialStore);
 
+  console.log(store);
+
 
   useEffect(() => {
-    const idx = observe.length;
-
     let prevPartial = partial;
 
     const cb = (nextState) => {
@@ -39,7 +41,7 @@ const useConnect = (mapFunction) => {
       }
     };
 
-    observe[idx] = cb;
+    observe.push(cb);
 
     return () => {
       const removeIdx = observe.findIndex(i => i === cb);

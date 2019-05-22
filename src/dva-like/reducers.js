@@ -12,7 +12,6 @@ const reducers = { // reducers 聚集地
 
 const effects = {}; // effects 聚集地
 
-
 /**
  * 公开出去的 reducer, 做一些常规操作
  * @param {*} state
@@ -26,8 +25,17 @@ const reducer = (state, action) => {
   if (subType) {
     // 如果有subType , 说明该reducer是来自调用者
     // 来自调用者, 通知所有 connect 有变化
-    if (reducers[type]) {
-      const updateData = reducers[type](state[namespace], action);
+    const subReducer = reducers[namespace];
+
+    if (subReducer[subType]) {
+      // 开始调用 reducer..
+      // reducer是纯净的, 他只应该接受 state 和 action, 并返回一个新的(本地)store,
+      // 禁止在reducer内调用dispatch(因为 dispatch 可能产生副作用)
+
+      // 1. 通知 react 视图变化
+      // 2. 更改本地维护的store (connect需要他)
+      // 3. 通知 useConnect 需要更新试图, useConnect 接收所有变更, 对比当前依赖, 判断是否update子组件
+      const updateData = subReducer[subType](state[namespace], action);
 
       const nextState = {
         ...state,
@@ -39,25 +47,15 @@ const reducer = (state, action) => {
       notifyConnects(nextState);
 
       return nextState;
-    } else if (effects[type]) {
-      // 本行代码已经在自定义 dispatch 里面实现了
-      console.warn('副作用操作有误');
-
-      // const {dispatch} = state;
-      // const put = (payload) => {
-      //   dispatch({
-      //     ...payload,
-      //     type: `${namespace}/${payload.type}`,
-      //   });
-      // };
-      // effects[type]({put}, action);
     } else {
       console.warn(`can not find type: ${type} in reducers!`);
       return state;
     }
   }
 
-  // 如果没有 subType, 说明该reducer是插件私有的东西
+  // 如果没有 subType, 说明该reducer是库私有 reducer
+  // 只有库私有 reducer 才不是一个 {}, 而是可以直接调用的函数
+  // 调用完毕不会进行任何通知
   if (!/^_/.test(type)) {
     throw new Error(`this action ${type} is illegal!`);
   }
@@ -66,36 +64,49 @@ const reducer = (state, action) => {
     return reducers[type](state, action);
   }
 
-  return state;
+  throw new Error(`unKnow error with dva-like;  type: ${type}, action: ${JSON.stringify(action)}`);
 };
 
 
 // 同步添加操作
 const addReducer = (namespace, add) => {
+  const local = {};
+  reducers[namespace] = local;
+
   add && Object.keys(add).forEach((key) => {
-    reducers[`${namespace}/${key}`] = add[key];
+    local[key] = add[key];
   });
 };
 
 const addEffect = (namespace, add) => {
+  const local = {};
+  effects[namespace] = local;
+
   add && Object.keys(add).forEach((key) => {
-    effects[`${namespace}/${key}`] = add[key];
+    local[key] = add[key];
   });
 };
 
 const addStore = (namespace, state) => {
   store[namespace] = state || {};
 };
+// 添加操作完毕
 
 /**
- * 看看他是不是一个 effect 函数
+ * 检查这个 action 是否是一个 effect
  * @param {*} ctx
  * @return {boolean}
  */
-const checkAsyncAction = (type) => effects[type];
+const checkAsyncAction = (type) => {
+  const [namespace, subType] = type.split('/');
+
+  return namespace && subType && effects[namespace] && effects[namespace][subType];
+};
+
 
 export {
-  reducer, store,
+  reducer,
+  store, reducers, effects,
   addReducer, addEffect, addStore,
   checkAsyncAction,
 };
