@@ -25,7 +25,7 @@ const model = {
     async getList({put}, action) {
       put({type: 'set', payload: {isFetching: true}});
 
-      const r = await new Promise((res) => {
+      const r = await new Promise((res, rej) => {
         setTimeout(() => {
           const resp = {
             code: 0,
@@ -37,7 +37,7 @@ const model = {
             payload: {list: resp.data},
           });
 
-          res(resp);
+          rej(resp);
         }, 1000);
       });
 

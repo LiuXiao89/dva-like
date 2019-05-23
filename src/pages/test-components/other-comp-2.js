@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useConnect} from 'src/dva-like';
 
 const mapFunc = ({home}) => ({home});
@@ -8,6 +8,11 @@ export default () => {
   const {dispatch, home} = useConnect(mapFunc);
 
   console.log('render other comp 2', home);
+
+  useEffect(() => {
+    console.log('comp2');
+  }, []);
+
 
   return (
     <div>

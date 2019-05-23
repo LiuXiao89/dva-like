@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {useConnect} from 'src/dva-like';
+
+import OtherComp from '../test-components/other-comp';
 
 const map = ({home}) => ({home});
 
@@ -9,6 +11,10 @@ export default () => {
 
 
   const {list, isFetching} = home;
+
+  useEffect(() => {
+    console.log('page3');
+  }, []);
 
 
   return (
@@ -39,6 +45,8 @@ export default () => {
           ))
         }
       </ul>
+
+      <OtherComp/>
 
 
     </div>

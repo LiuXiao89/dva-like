@@ -27,26 +27,38 @@ const reducer = (state, action) => {
     // 来自调用者, 通知所有 connect 有变化
     const subReducer = reducers[namespace];
 
+    if (!subReducer) {
+      const e = new Error(`did you register model with namespace:${namespace}?`);
+      console.error(e);
+      return state;
+    }
+
     if (subReducer[subType]) {
       // 开始调用 reducer..
       // reducer是纯净的, 他只应该接受 state 和 action, 并返回一个新的(本地)store,
-      // 禁止在reducer内调用dispatch(因为 dispatch 可能产生副作用)
+      // 禁止在 reducer 内调用 dispatch(因为 dispatch 可能产生副作用)
 
       // 1. 通知 react 视图变化
       // 2. 更改本地维护的store (connect需要他)
       // 3. 通知 useConnect 需要更新试图, useConnect 接收所有变更, 对比当前依赖, 判断是否update子组件
-      const updateData = subReducer[subType](state[namespace], action);
+      try {
+        // 增加错误捕获
+        const updateData = subReducer[subType](state[namespace], action);
 
-      const nextState = {
-        ...state,
-        [namespace]: updateData,
-      };
+        const nextState = {
+          ...state,
+          [namespace]: updateData,
+        };
 
-      store[namespace] = updateData;
+        store[namespace] = updateData;
 
-      notifyConnects(nextState);
+        notifyConnects(nextState);
 
-      return nextState;
+        return nextState;
+      } catch (e) {
+        console.error(e);
+        return state;
+      }
     } else {
       console.warn(`can not find type: ${type} in reducers!`);
       return state;

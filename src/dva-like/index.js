@@ -11,6 +11,8 @@ import {model, start} from './bootstrap';
 
 import useConnect from './use-connect';
 
+import {lazyLoad} from './utils';
+
 {
   // validate version
   const {version} = React;
@@ -32,4 +34,6 @@ export {
 
   useStore, // 使用整个store
   useConnect, // use 部分 store
+
+  lazyLoad, // 延迟注册.. 依赖 React.lazy
 };

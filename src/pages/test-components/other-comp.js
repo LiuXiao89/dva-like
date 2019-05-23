@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useConnect} from 'src/dva-like';
 import {useRouter} from 'src/hooks/use-router';
 
@@ -10,6 +10,10 @@ export default () => {
   const {history} = useRouter();
 
   console.log('render other comp 1', global);
+
+  useEffect(() => {
+    console.log('comp');
+  }, []);
 
   return (
     <div>

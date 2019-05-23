@@ -36,6 +36,7 @@ const config = {
 };
 
 const replaceClass = (node, actionType) => {
+  if (!node) return;
   const {prefix} = config;
 
   const actionMap = {
@@ -79,6 +80,7 @@ const Animate = (props) => {
   const key = ignorePath.find(item => location.pathname.indexOf(item) !== -1) || location.pathname;
 
   pushStateKey(window.history.state && window.history.state.key);
+
 
   return (
     <TransitionGroup

@@ -4,18 +4,32 @@ import {useStore} from 'src/dva-like';
 import './style.less';
 
 // 使用全局 store
+// 但是只使用了 global
+// 可以观察 dynamic model 的注册情况..
 export default () => {
   const store = useStore();
 
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
 
-  const {global, dispatch} = store;
+  const {global, dispatch, dynamic} = store;
   const {isLogin, userName, isFetchLogin} = global;
+
 
   return (
     <div className={'page1'}>
       page1!;
+
+      <br/>
+
+      <button
+        onClick={() => dispatch({
+          type: 'dynamic/add',
+        })}
+      >点击, 尝试触发 dynamic 的 dispatch
+      </button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        dynamic 是否注册? {dynamic ? `注册了: count: ${dynamic.count}` : '没有注册'}
 
       <br/>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useConnect} from 'src/dva-like';
 
 const mapFunc = ({dynamic}) => ({dynamic});
@@ -9,6 +9,12 @@ export default () => {
 
   console.log('render other comp 3', dynamic);
 
+
+  useEffect(() => {
+    console.log('comp3');
+  }, []);
+
+
   return (
     <div>
 
@@ -16,7 +22,7 @@ export default () => {
 
       <button
         onClick={() => {
-          dispatch({type: 'dynamic/set', payload: {count: dynamic.count + 1}});
+          dispatch({type: 'dynamic/set', payload: {count: dynamic && dynamic.count + 1}});
         }}
       >
         加count
@@ -24,7 +30,7 @@ export default () => {
 
       <br />
 
-      {dynamic.count}
+      {!dynamic ? 'dynamic 没有注册!' : dynamic.count}
 
     </div>
   );

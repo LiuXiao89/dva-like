@@ -51,20 +51,24 @@ const dvaDispatch = action => {
       const [n, t] = splitAction(ac);
       const localEffect = effects[namespace][ac.type];
 
-      if (localEffect) return localEffect({put, call}, ac);
-
       const globalEffect = effects[n] && effects[n][t];
 
-      if (globalEffect) return globalEffect({put, call}, ac);
+      const effect = localEffect || globalEffect;
 
-      throw new Error(`can't find effect '${ac.type}'.
+      if (!effect) {
+        console.error(new Error(`can't find effect '${ac.type}'.
                         namespace: '${namespace}',
                         action: ${JSON.stringify(action)},
                         subAction: ${JSON.stringify(ac)}
-                        `);
+                        `));
+      }
+
+      return effect({put, call}, ac)
+        .catch(e => console.error('dva-like catch error:', e));
     };
 
-    return asyncAction({put, call}, action);
+    return asyncAction({put, call}, action)
+      .catch(e => console.error('dva-like catch error:', e));
   }
 };
 

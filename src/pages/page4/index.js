@@ -1,14 +1,16 @@
 import React, {useReducer} from 'react';
-
 import {useConnect} from 'src/dva-like';
+// import dynamicModel from 'src/models/dynamic';
 
 import Comp from './comp';
 
+// 需要先注册 dynamic model
+// model(dynamicModel);
+// 注册完了.....
+
 const mapFunc = ({dynamic}) => ({dynamic});
 
-const data = {
-  num: 1,
-};
+const data = {num: 1};
 
 const reducer = (state, action) => {
   console.log('self reducer');

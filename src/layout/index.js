@@ -1,19 +1,16 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import {Route} from 'react-router-dom';
 import {useRouter} from 'src/hooks/use-router';
 import Animate from 'src/components/animate-router';
 
-import Page1 from 'src/pages/page1';
-import Page2 from 'src/pages/page2';
-import Page3 from 'src/pages/page3';
-import Page4 from 'src/pages/page4';
+import {Page1, Page2, Page3, Page4} from 'src/lazy';
 
 import './style.less';
+
 
 // layout
 const App = () => {
   const {history} = useRouter();
-
 
   return (
     <div className={'main-layout'}>
@@ -39,16 +36,22 @@ const App = () => {
       <div className={'page'}>
 
         <Animate>
+          <Suspense
+            fallback={(
+              <div>loading.........</div>
+            )}
+          >
+            <Route path={'/1'} key={1} exact render={(p) => <Page1 {...p} />} />
+            <Route path={'/2'} key={2} exact render={(p) => <Page2 {...p} />} />
+            <Route path={'/3'} key={3} exact render={(p) => <Page3 {...p} />} />
+            <Route path={'/4'} key={4} exact render={(p) => <Page4 {...p} />} />
 
-          <Route path={'/1'} key={1} exact component={Page1}/>
-          <Route path={'/2'} key={1} exact component={Page2} />
-          <Route path={'/3'} key={1} exact component={Page3} />
-          <Route path={'/4'} key={1} exact component={Page4} />
-
+          </Suspense>
         </Animate>
 
+
       </div>
-    </div>
+    </div >
 
 
   );

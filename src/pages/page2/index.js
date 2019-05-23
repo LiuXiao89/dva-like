@@ -1,10 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useConnect} from 'src/dva-like';
 
 import OtherComp from '../test-components/other-comp';
 import OtherComp2 from '../test-components/other-comp-2';
 import OtherComp3 from '../test-components/other-comp-3';
-import OtherComp4 from '../test-components/other-comp-4';
 
 
 const mapFunc = ({global}) => ({global});
@@ -16,6 +15,10 @@ export default () => {
   const state = useConnect(mapFunc);
 
   console.log('render page 2', state);
+
+  useEffect(() => {
+    console.log('page');
+  }, []);
 
   return (
     <div>
@@ -36,9 +39,6 @@ export default () => {
       <OtherComp3/>
 
       <br/>
-
-      <OtherComp4/>
-
 
     </div>
   );
