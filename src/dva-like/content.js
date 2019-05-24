@@ -73,7 +73,7 @@ const dvaDispatch = action => {
 };
 
 
-const MyProvider = ({children}) => {
+const DvaProvider = ({children}) => {
   const {Provider, globalContext} = content;
 
   const ctxData = useContext(globalContext);
@@ -95,6 +95,6 @@ const MyProvider = ({children}) => {
 
 const useStore = () => useContext(content.globalContext);
 
-export default MyProvider;
+export default DvaProvider;
 
 export {setStore, content, _store, useStore};

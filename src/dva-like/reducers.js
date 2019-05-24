@@ -1,7 +1,7 @@
 /**
  * models collection
  */
-import {notifyConnects} from './use-connect.js';
+import {connectObserver} from './use-connect.js';
 
 const store = {}; // store 聚集地
 
@@ -52,7 +52,7 @@ const reducer = (state, action) => {
 
         store[namespace] = updateData;
 
-        notifyConnects(nextState);
+        connectObserver.notify(nextState);
 
         return nextState;
       } catch (e) {

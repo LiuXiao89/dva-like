@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
 import {content} from './content';
 import {store} from './reducers';
+import {Observe} from './utils';
 
-const observe = [];
 
-const notifyConnects = (nextState) => {
-  observe.forEach((cb) => cb && cb(nextState));
-};
+// 通知useConnect更新,
+// 注意: observe 不一定是 '充满的', 需要跳过 null 部分
+const connectObserver = new Observe();
 
 // 使用本地维护的 store 来进行数据连接
 // 如果使用 reducer, 那么需要连接全局store... 就白连接了
@@ -39,28 +39,15 @@ const useConnect = (mapFunction) => {
       }
     };
 
-    // 尽量不使用 splice, 减小运算复杂度
-    let idx = -1;
-    const len = observe.length;
+    const idx = connectObserver.add(cb);
 
-    for (let i = 0; i < len; i++) {
-      if (!observe[i]) {
-        idx = i;
-        break;
-      }
-    }
-
-    idx = idx === -1 ? len : idx;
-
-    observe[idx] = cb;
-
-    return () => { observe[idx] = null; };
+    return () => { connectObserver.delete(idx); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {...partial, dispatch: content.dispatch};
 };
 
-export {notifyConnects};
+export {connectObserver};
 
 export default useConnect;

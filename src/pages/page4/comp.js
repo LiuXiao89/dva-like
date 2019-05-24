@@ -5,6 +5,7 @@ import {useStore} from 'src/dva-like';
 export default () => {
   const {dispatch, dynamic, home} = useStore();
 
+
   return (
     <div>
 

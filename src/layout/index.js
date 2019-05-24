@@ -5,25 +5,37 @@ import Animate from 'src/components/animate-router';
 
 import {Page1, Page2, Page3, Page4} from 'src/lazy';
 
+import ErrorBoundary from './ErrorBoundary';
+
 import './style.less';
 
 
 // layout
-const App = () => {
+const Layout = () => {
   const {history} = useRouter();
+
 
   return (
     <div className={'main-layout'}>
 
       <header>
-        <p>首页头部</p>
+        <p>
+          <button
+            onClick={() => history.goBack()}
+          >点击返回
+          </button>
+          <br/>
+          首页头部
+
+        </p>
+
         <menu>
           <ul>
             {
               [1, 2, 3, 4].map(item => (
                 <li
                   key={item}
-                  onClick={() => history.push(`/${item}`)}
+                  onClick={() => history.replace(`/${item}`)}
                 >
                   跳转第{item}页
                 </li>
@@ -36,19 +48,20 @@ const App = () => {
       <div className={'page'}>
 
         <Animate>
-          <Suspense
-            fallback={(
-              <div>loading.........</div>
-            )}
-          >
-            <Route path={'/1'} key={1} exact render={(p) => <Page1 {...p} />} />
-            <Route path={'/2'} key={2} exact render={(p) => <Page2 {...p} />} />
-            <Route path={'/3'} key={3} exact render={(p) => <Page3 {...p} />} />
-            <Route path={'/4'} key={4} exact render={(p) => <Page4 {...p} />} />
+          <ErrorBoundary>
+            <Suspense
+              fallback={(
+                <div>loading.........</div>
+              )}
+            >
+              <Route path={'/1'} key={1} exact render={(p) => <Page1 {...p} />} />
+              <Route path={'/2'} key={2} exact render={(p) => <Page2 {...p} />} />
+              <Route path={'/3'} key={3} exact render={(p) => <Page3 {...p} />} />
+              <Route path={'/4'} key={4} exact render={(p) => <Page4 {...p} />} />
 
-          </Suspense>
+            </Suspense>
+          </ErrorBoundary>
         </Animate>
-
 
       </div>
     </div >
@@ -57,5 +70,5 @@ const App = () => {
   );
 };
 
-export default App;
+export default Layout;
 

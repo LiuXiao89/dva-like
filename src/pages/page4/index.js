@@ -28,6 +28,8 @@ export default () => {
 
   const [state, dispatchReducer] = useReducer(reducer, data);
 
+  // console.log(dynamic.fa.few.fe);
+
 
   // console.log('render other page 4, depend on dynamic', dynamic);
 

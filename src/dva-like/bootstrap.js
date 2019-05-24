@@ -39,11 +39,13 @@ const registerModel = ({namespace, state, reducers, effects}) => {
 const start = (App) => {
   setStore();
 
-  return () => (
+  const DvaContent = () => (
     <Provider>
       <App />
     </Provider>
   );
+
+  return DvaContent;
 };
 
 

@@ -9,11 +9,13 @@ import models from 'src/models';
 
 models.forEach(item => model(item));
 
-const Main = start(() => (
+const App = () => (
   <CustomRouter>
     <Layout />
   </CustomRouter>
-));
+);
+
+const Main = start(App);
 
 ReactDOM.render(
   <Main/>,
