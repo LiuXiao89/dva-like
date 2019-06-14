@@ -1,14 +1,11 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 import {Route} from 'react-router-dom';
 import {useRouter} from 'src/hooks/use-router';
 import Animate from 'src/components/animate-router';
 
-import {Page1, Page2, Page3, Page4} from 'src/lazy';
-
-import ErrorBoundary from './ErrorBoundary';
+import {Page1, Page2, Page3, Page4} from 'src/router/page-map-async';
 
 import './style.less';
-
 
 // layout
 const Layout = () => {
@@ -35,7 +32,7 @@ const Layout = () => {
               [1, 2, 3, 4].map(item => (
                 <li
                   key={item}
-                  onClick={() => history.replace(`/${item}`)}
+                  onClick={() => history.push(`/${item}`)}
                 >
                   跳转第{item}页
                 </li>
@@ -46,23 +43,12 @@ const Layout = () => {
       </header>
 
       <div className={'page'}>
-
         <Animate>
-          <ErrorBoundary>
-            <Suspense
-              fallback={(
-                <div>loading.........</div>
-              )}
-            >
-              <Route path={'/1'} key={1} exact render={(p) => <Page1 {...p} />} />
-              <Route path={'/2'} key={2} exact render={(p) => <Page2 {...p} />} />
-              <Route path={'/3'} key={3} exact render={(p) => <Page3 {...p} />} />
-              <Route path={'/4'} key={4} exact render={(p) => <Page4 {...p} />} />
-
-            </Suspense>
-          </ErrorBoundary>
+          <Route path={'/1'} key={1} exact render={(p) => <Page1 {...p} />} />
+          <Route path={'/2'} key={2} exact render={(p) => <Page2 {...p} />} />
+          <Route path={'/3'} key={3} exact render={(p) => <Page3 {...p} />} />
+          <Route path={'/4'} key={4} exact render={(p) => <Page4 {...p} />} />
         </Animate>
-
       </div>
     </div >
 

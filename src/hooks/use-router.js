@@ -1,5 +1,7 @@
 import React, {useContext} from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
+
+import {hackHistory} from 'src/router';
 // import {setPush} from 'src/components/animate-router';
 
 // useRouter 必须配合 context: CustomRouter 使用
@@ -8,7 +10,7 @@ const routerContext = React.createContext({});
 const {Provider} = routerContext;
 
 // 劫持history, 为了动画路由
-// 在 animate-router 里面比较完美的实现了动画, 暂时不需要他了
+// 已经在 animate-router 里面比较完美的实现了动画, 不需要他了
 // const mixinHistory = (props) => {
 //   const mix = {...props.history};
 
@@ -33,6 +35,7 @@ const CustomRouter = ({children}) => {
     <BrowserRouter>
       <Route
         render={props => {
+          hackHistory(props);
           // const history = mixinHistory(props);
           // <Provider value={{...props, history}}>
           return (

@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useReducer, useEffect} from 'react';
 import {useConnect} from 'src/dva-like';
 // import dynamicModel from 'src/models/dynamic';
 
@@ -23,10 +23,17 @@ const reducer = (state, action) => {
   }
 };
 
-export default () => {
-  const {dispatch, dynamic} = useConnect(mapFunc);
+const Page4 = () => {
+  const {dispatch, dynamic = {}} = useConnect(mapFunc);
 
   const [state, dispatchReducer] = useReducer(reducer, data);
+
+  useEffect(() => {
+    dispatch({type: 'dynamic/set', payload: {count: 5}});
+    dispatch({type: 'global/getSth'});
+
+    console.log('page 4 挂载!!');
+  }, [dispatch]);
 
   // console.log(dynamic.fa.few.fe);
 
@@ -66,3 +73,6 @@ export default () => {
     </div>
   );
 };
+
+
+export default Page4;

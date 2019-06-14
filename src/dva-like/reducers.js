@@ -2,6 +2,9 @@
  * models collection
  */
 import {connectObserver} from './use-connect.js';
+import {splitAction, splitType, deepClone} from './utils';
+
+const copyStore = {}; // 当 reset 的时候, 需要一个 copy 的 store;
 
 const store = {}; // store 聚集地
 
@@ -20,7 +23,7 @@ const effects = {}; // effects 聚集地
 const reducer = (state, action) => {
   const {type} = action;
 
-  const [namespace, subType] = type.split('/');
+  const [namespace, subType] = splitAction(action);
 
   if (subType) {
     // 如果有subType , 说明该reducer是来自调用者
@@ -65,11 +68,14 @@ const reducer = (state, action) => {
     }
   }
 
-  // 如果没有 subType, 说明该reducer是库私有 reducer
+  // 如果没有 subType, 说明该reducer是库私有 reducer, 也可能需要 call
   // 只有库私有 reducer 才不是一个 {}, 而是可以直接调用的函数
   // 调用完毕不会进行任何通知
   if (!/^_/.test(type)) {
-    throw new Error(`this action ${type} is illegal!`);
+    throw new Error(`
+    this action ${type} is illegal!
+    perhaps this is an effect, try to use {call} instead?
+    `);
   }
 
   if (reducers[type]) {
@@ -84,6 +90,16 @@ const reducer = (state, action) => {
 const addReducer = (namespace, add) => {
   const local = {};
   reducers[namespace] = local;
+
+  // 如果没有 set 和 reset 方法, 自动添加. 否则使用自己定义的
+  if (!add.set) {
+    add.set = (state, action) => ({...state, ...action.payload});
+  }
+
+  if (!add.reset) {
+    add.reset = state => ({...state, ...copyStore[namespace]});
+  }
+  // 添加完毕
 
   add && Object.keys(add).forEach((key) => {
     local[key] = add[key];
@@ -101,16 +117,20 @@ const addEffect = (namespace, add) => {
 
 const addStore = (namespace, state) => {
   store[namespace] = state || {};
+
+  copyStore[namespace] = deepClone(state);
 };
 // 添加操作完毕
 
+
+// / helpers
 /**
- * 检查这个 action 是否是一个 effect
+ * 检查这个 type 是否是一个 effect
  * @param {*} ctx
  * @return {boolean}
  */
 const checkAsyncAction = (type) => {
-  const [namespace, subType] = type.split('/');
+  const [namespace, subType] = splitType(type);
 
   return namespace && subType && effects[namespace] && effects[namespace][subType];
 };

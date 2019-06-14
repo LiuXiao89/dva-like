@@ -1,5 +1,4 @@
-import {lazy} from 'react';
-import {model} from './bootstrap';
+
 
 /**
  * 返回当前 type 的 namespace 和 subType
@@ -7,6 +6,11 @@ import {model} from './bootstrap';
  */
 export const splitAction = (action) => {
   const {type} = action;
+
+  return splitType(type);
+};
+
+export const splitType = (type) => {
   const reg = /^([^/]+)\/(.*)$/;
 
   const result = reg.exec(type);
@@ -15,21 +19,6 @@ export const splitAction = (action) => {
     [result[1], result[2]] : [type];
 };
 
-/**
- * 传入页面 import 语句和 models import 数组, 返回一个 React.lazy symbol
- * @param {Array} modelPromise import 语句数组
- * @param {Function} compPromise import 语句
- * @returns {React.lazy} React lazy 组件
- */
-export const lazyLoad = (compPromise, modelPromise) => {
-  return lazy(() => Promise.all(modelPromise ? modelPromise.map(imp => imp()) : [])
-    .then((models) => {
-      models.forEach(item => {
-        model(item.default);
-      });
-    })
-    .then(compPromise));
-};
 
 /**
  * use-connect 使用
@@ -66,3 +55,35 @@ export class Observe {
     this.cbs.forEach(cb => cb && cb(...args));
   }
 }
+
+/**
+ * reducer 使用 深拷贝
+ * @param {object} source 源对象
+ * @returns {object} target 拷贝对象
+ */
+
+export const deepClone = (source) => {
+  let target;
+  const type = typeof source;
+  const isArray = Array.isArray(source);
+
+  if (!source) return source;
+
+  if (isArray) {
+    target = [];
+
+    source.forEach((item, index) => {
+      target[index] = deepClone(item, null);
+    });
+  } else if (type === 'object') {
+    target = {};
+
+    Object.keys(source).forEach((key) => {
+      target[key] = deepClone(source[key], null);
+    });
+  } else {
+    target = source;
+  }
+
+  return target;
+};

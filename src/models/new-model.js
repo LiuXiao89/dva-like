@@ -6,9 +6,7 @@ const model = {
     more: null,
   },
 
-  reducers: {
-    set: (state, action) => ({...state, ...action.payload}),
-  },
+  reducers: { },
 };
 
 export default model;

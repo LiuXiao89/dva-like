@@ -1,47 +1,42 @@
 import React from 'react';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
-import {Switch} from 'react-router';
-
-import {useRouter} from 'src/hooks/use-router';
+import {Switch, Route} from 'react-router';
 
 import './animate.less';
 
-/* 监听是否是 Push 状态 */
-const isSupportHistory = window.history && window.history.state; // 如果不支持 history.state 需要优雅降级
-const stateKeyStack = [];
-const pathStack = [];
+// 如果不支持 history.state, 优雅降级为 pathname
+const isSupportHistory = window.history && window.history.state;
+// 路由栈, 里面可能是 stateKey | pathname (pathname 的时候是不保证路由动画准确的)
+const routeStack = [];
+// 是否是推入栈, 进入退出动画不一样
 let isPush = true;
-let isPopState = false;
 
-const setPush = push => { isPush = push; };
+const setPush = (push) => { isPush = push; };
 
 const pushStateKey = (key, path) => {
-  if (isSupportHistory) {
-    stateKeyStack[stateKeyStack.length - 1] !== key && stateKeyStack.push(key);
-  } else {
-    pathStack[pathStack.length - 1] !== path && pathStack.push(path);
-  }
+  const value = isSupportHistory ? key : path;
+  routeStack[routeStack.length - 1] !== value && routeStack.push(value);
 };
 
+// 浏览器动作 | history.goBack 的原因产生的路由变化
+// 只有这时候, 才可能是回退状态, 否则都是 push
 window.addEventListener('popstate', () => {
-  // 监听浏览器路由的时候
-  isPopState = true;
-  let isBack = false;
-  if (isSupportHistory) {
-    isBack = window.history.state.key === stateKeyStack[stateKeyStack.length - 2];
-  } else {
-    isBack = window.location.pathname === pathStack[pathStack.length - 2];
-  }
+  const curRouteVal = isSupportHistory ? window.history.state.key : window.location.pathname;
+
+  const isBack = curRouteVal === routeStack[routeStack.length - 2];
 
   isPush = !isBack;
-  if (isBack) {
-    stateKeyStack.pop();
-    pathStack.pop();
-  }
+  isBack && routeStack.pop();
 });
-/* 监听结束, 暴露 setPush 方法 给外部, 必须 在每次push 页面的时候通知该组件 */
-/* 当然, 外部可以不调用, 那么是不是push 状态只能组件从路由栈中判断, 不一定准确 */
+// 监听结束, 暴露 `setPush` 方法 给外部, 可以在某些特定的时候通知组件, 这次动画到底使用进入还是退出
+// 当然, 外部可以不调用, 那么是不是push 状态只由组件从路由栈中判断, (可能会不准确, 当然基本不存在这种情况)
 
+
+let globalHistory = null;
+
+const getHistory = () => globalHistory;
+
+// 以下为 render 函数
 const config = {
   prefix: 'animate-router',
   routerKey: 'a-r-keyword',
@@ -49,9 +44,8 @@ const config = {
   container: 'animate-r-container',
 };
 
-const replaceClass = (node, actionType) => {
+const replaceClass = (node, actionType, prefix) => {
   if (!node) return;
-  const {prefix} = config;
 
   const actionMap = {
     enter: 'enter',
@@ -64,30 +58,17 @@ const replaceClass = (node, actionType) => {
 
   node.className = `${config.container} ${prefix}-${isPush ? 'forward' : 'backward'}-${actionMap[actionType]}`;
 
-  // 动画完毕, 而且确实是因为 history.goBack|浏览器原生路由 产生动画的话
-  if (actionType === 'entered' && isPopState) {
-    isPopState = false;
-    isPush = true;
-  }
+  // push 状态重置回 true;
+  if (actionType === 'entered') isPush = true;
 };
-
-const cssHooks = {
-  onExit: n => replaceClass(n, 'exit'),
-  onExiting: n => replaceClass(n, 'exiting'),
-  onExited: n => replaceClass(n, 'exited'),
-  onEnter: n => replaceClass(n, 'enter'),
-  onEntering: n => replaceClass(n, 'entering'),
-  onEntered: n => replaceClass(n, 'entered'),
-};
-
 
 const Animate = (props) => {
-  const router = useRouter();
+  const {location, history} = props;
 
-  const {location} = router;
+  globalHistory = history;
 
   const {
-    prefix,
+    prefix = config.prefix,
     children,
     appear,
     transitionKeyFun,
@@ -95,11 +76,19 @@ const Animate = (props) => {
     ignorePath = [],
   } = props;
 
-  if (prefix && config.prefix !== prefix) config.prefix = prefix;
+  const key = ignorePath.find(item => location.pathname.indexOf(item) === 0) || location.pathname;
 
-  const key = ignorePath.find(item => location.pathname.indexOf(item) !== -1) || location.pathname;
 
   pushStateKey(window.history.state && window.history.state.key, location.pathname);
+
+  const cssHooks = {
+    onExit: n => replaceClass(n, 'exit', prefix),
+    onExiting: n => replaceClass(n, 'exiting', prefix),
+    onExited: n => replaceClass(n, 'exited', prefix),
+    onEnter: n => replaceClass(n, 'enter', prefix),
+    onEntering: n => replaceClass(n, 'entering', prefix),
+    onEntered: n => replaceClass(n, 'entered', prefix),
+  };
 
   return (
     <TransitionGroup
@@ -121,7 +110,7 @@ const Animate = (props) => {
 };
 
 export {
-  setPush,
+  setPush, routeStack, getHistory,
 };
 
-export default Animate;
+export default props => <Route render={r => <Animate {...r} {...props}/>}/>;

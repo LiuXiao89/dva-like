@@ -6,12 +6,17 @@ import Provider, {setStore, content} from './content';
 
 // we register models like this
 const registerModel = ({namespace, state, reducers, effects}) => {
+  // 不能以下划线开头
+  if (/^_/.test(namespace)) {
+    return console.error(`namespace 不能以下划线开头: ${namespace}`);
+  }
+
   // 添加之前, 首先验证是否已经注册过, 然后验证是否有同名函数
   if (store[namespace]) {
     throw new Error(`store with namespace: ${namespace} is already exist!`);
   }
 
-  reducers && effects && Object.keys(reducers).forEach(key => {
+  reducers && effects && Object.keys(reducers).forEach((key) => {
     if (effects[key]) {
       throw new Error(`the namespace ${namespace} has the same key ${key} in reducers and effects!`);
     }

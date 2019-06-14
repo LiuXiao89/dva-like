@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import ReactDOM from 'react-dom';
 import Layout from 'src/layout';
 
+import ErrorBoundary from 'src/layout/error-boundary';
 import {CustomRouter} from 'src/hooks/use-router';
 
 import {model, start} from 'src/dva-like';
@@ -9,16 +10,22 @@ import models from 'src/models';
 
 models.forEach(item => model(item));
 
-const App = () => (
-  <CustomRouter>
-    <Layout />
-  </CustomRouter>
-);
+const App = () => <Layout />;
 
 const Main = start(App);
 
 ReactDOM.render(
-  <Main/>,
+  <ErrorBoundary>
+    <Suspense
+      fallback={(
+        <div>loading.........</div>
+      )}
+    >
+      <CustomRouter>
+        <Main />
+      </CustomRouter>
+    </Suspense>
+  </ErrorBoundary>,
   document.getElementById('root')
 );
 
@@ -28,3 +35,8 @@ ReactDOM.render(
 
 // import * as serviceWorker from '../serviceWorker';
 // serviceWorker.unregister();
+
+/**
+ *
+
+ */

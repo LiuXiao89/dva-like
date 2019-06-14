@@ -16,13 +16,11 @@ const model = {
     },
     changeColor: (state, action) => ({...state, color: state.color === 'red' ? 'blue' : 'red'}),
     toggleFetch: (state, action) => ({...state, isFetching: !state.isFetching}),
-    set: (state, action) => {
-      return ({...state, ...action.payload});
-    },
+
   },
 
   effects: {
-    async getList({put}, action) {
+    async getList(action, {put}) {
       put({type: 'set', payload: {isFetching: true}});
 
       const r = await new Promise((res, rej) => {

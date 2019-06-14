@@ -3,17 +3,19 @@ import React from 'react';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {hasError: false, err: null};
+    this.state = {hasError: false};
   }
 
   static getDerivedStateFromError(error) {
     // can upload error
     console.warn(error);
-    return {hasError: true, err: error.message};
+    return {hasError: true};
   }
 
   render() {
+    console.log('render error');
     const {hasError, err} = this.state;
+
     if (hasError) {
       return (
         <div>

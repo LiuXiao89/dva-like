@@ -19,13 +19,11 @@ export default {
     increase(state) {
       return {...state, count: state.count + 1};
     },
-    set(state, action) {
-      return {...state, ...action.payload};
-    },
+
   },
 
   effects: {
-    async login({put, call}, {payload}) {
+    async login({payload}, {put, call}) {
       put({type: 'set', payload: {isFetchLogin: true}});
 
       const resp = await new Promise((res) => {
@@ -59,7 +57,7 @@ export default {
       return resp;
     },
 
-    async getSth({put}, {payload}) {
+    async getSth({payload}, {put}) {
       const resp = await new Promise((resolve) => {
         setTimeout(() => {
           resolve(payload === 0 ? '获取完毕' : '登录失败, 不能获取');
