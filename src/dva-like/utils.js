@@ -55,35 +55,3 @@ export class Observe {
     this.cbs.forEach(cb => cb && cb(...args));
   }
 }
-
-/**
- * reducer 使用 深拷贝
- * @param {object} source 源对象
- * @returns {object} target 拷贝对象
- */
-
-export const deepClone = (source) => {
-  let target;
-  const type = typeof source;
-  const isArray = Array.isArray(source);
-
-  if (!source) return source;
-
-  if (isArray) {
-    target = [];
-
-    source.forEach((item, index) => {
-      target[index] = deepClone(item, null);
-    });
-  } else if (type === 'object') {
-    target = {};
-
-    Object.keys(source).forEach((key) => {
-      target[key] = deepClone(source[key], null);
-    });
-  } else {
-    target = source;
-  }
-
-  return target;
-};

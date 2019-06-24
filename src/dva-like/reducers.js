@@ -2,7 +2,7 @@
  * models collection
  */
 import {connectObserver} from './use-connect.js';
-import {splitAction, splitType, deepClone} from './utils';
+import {splitAction, splitType} from './utils';
 
 const copyStore = {}; // 当 reset 的时候, 需要一个 copy 的 store;
 
@@ -118,7 +118,7 @@ const addEffect = (namespace, add) => {
 const addStore = (namespace, state) => {
   store[namespace] = state || {};
 
-  copyStore[namespace] = deepClone(state);
+  copyStore[namespace] = deepCopy(state);
 };
 // 添加操作完毕
 
@@ -133,6 +133,37 @@ const checkAsyncAction = (type) => {
   const [namespace, subType] = splitType(type);
 
   return namespace && subType && effects[namespace] && effects[namespace][subType];
+};
+
+/**
+ * 深拷贝
+ * @param {object} source 源对象
+ * @returns {object} target 拷贝对象
+ */
+const deepCopy = (source) => {
+  let target;
+  const type = typeof source;
+  const isArray = Array.isArray(source);
+
+  if (!source) return source;
+
+  if (isArray) {
+    target = [];
+
+    source.forEach((item, index) => {
+      target[index] = deepCopy(item, null);
+    });
+  } else if (type === 'object') {
+    target = {};
+
+    Object.keys(source).forEach((key) => {
+      target[key] = deepCopy(source[key], null);
+    });
+  } else {
+    target = source;
+  }
+
+  return target;
 };
 
 
