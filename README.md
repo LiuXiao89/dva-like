@@ -6,7 +6,7 @@
 
 - 基于 React v16.8+ 
 - 可以使用 hooks 或者高阶组件 无缝连接组件
-- 继承 React.lazy 的 lazyLoad 可以异步加载组件和model
+- 继承 React.lazy 的 lazyLoad 可以异步加载组件和model
 - 使用了 async - await 的 effects, 逻辑上更加符合直觉
 
 ## 依赖
@@ -21,77 +21,75 @@
 - dispatch({type: 'namespace/reset'}) 来重置命名空间
 
 1. models 声明: 
-`
-const globalModel = {
-  namespace: 'global',
+  const globalModel = {
+    namespace: 'global',
 
-  state: {
-    isFetchLogin: false,
-    isLogin: false,
-    userName: null,
+    state: {
+      isFetchLogin: false,
+      isLogin: false,
+      userName: null,
 
-    count: 1,
-  },
-
-  reducers: {
-    logout(state) {
-      return {...state, isLogin: false, userName: null};
-    },
-    increase(state) {
-      return {...state, count: state.count + 1};
+      count: 1,
     },
 
-  },
+    reducers: {
+      logout(state) {
+        return {...state, isLogin: false, userName: null};
+      },
+      increase(state) {
+        return {...state, count: state.count + 1};
+      },
 
-  effects: {
-    async login({payload}, {put, call}) {
-      put({type: 'set', payload: {isFetchLogin: true}});
-
-      const resp = await new Promise((res) => {
-        setTimeout(() => {
-          if (user.includes(payload.user) && pwd.includes(payload.pwd)) {
-            res({code: 0});
-          } else {
-            res({code: 1});
-          }
-        }, 200);
-      });
-
-      const list = await call({type: 'home/getList'});
-
-      console.log('异步调用其他effects 完毕', list);
-
-      const localRes = await call({type: 'getSth', payload: resp.code});
-
-      console.log('异步调用本地effects 完毕', localRes);
-
-      put({type: 'set', payload: {isFetchLogin: false}});
-
-      resp.code === 0 && put({
-        type: 'set',
-        payload: {
-          isLogin: true,
-          userName: payload.user,
-        },
-      });
-
-      return resp;
     },
 
-    async getSth({payload}, {put}) {
-      const resp = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(payload === 0 ? '获取完毕' : '登录失败, 不能获取');
-        }, 150);
-      });
+    effects: {
+      async login({payload}, {put, call}) {
+        put({type: 'set', payload: {isFetchLogin: true}});
 
-      put({type: 'increase'});
+        const resp = await new Promise((res) => {
+          setTimeout(() => {
+            if (user.includes(payload.user) && pwd.includes(payload.pwd)) {
+              res({code: 0});
+            } else {
+              res({code: 1});
+            }
+          }, 200);
+        });
 
-      return resp;
+        const list = await call({type: 'home/getList'});
+
+        console.log('异步调用其他effects 完毕', list);
+
+        const localRes = await call({type: 'getSth', payload: resp.code});
+
+        console.log('异步调用本地effects 完毕', localRes);
+
+        put({type: 'set', payload: {isFetchLogin: false}});
+
+        resp.code === 0 && put({
+          type: 'set',
+          payload: {
+            isLogin: true,
+            userName: payload.user,
+          },
+        });
+
+        return resp;
+      },
+
+      async getSth({payload}, {put}) {
+        const resp = await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(payload === 0 ? '获取完毕' : '登录失败, 不能获取');
+          }, 150);
+        });
+
+        put({type: 'increase'});
+
+        return resp;
+      },
     },
-  },
-};
-`
+  };
 
 2. `import {model, start, store, connect, useStore, useConnect} from 'src/dva-like'`,  
 
