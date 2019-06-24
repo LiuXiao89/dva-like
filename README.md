@@ -21,6 +21,7 @@
 - dispatch({type: 'namespace/reset'}) 来重置命名空间
 
 1. models 声明: 
+  ```
   const globalModel = {
     namespace: 'global',
 
@@ -90,8 +91,9 @@
       },
     },
   };
+   ```
 
-2. `import {model, start, store, connect, useStore, useConnect} from 'src/dva-like'`,  
+2. ```import {model, start, store, connect, useStore, useConnect} from 'src/dva-like'```,  
 
 3. 然后model(globalModel), 即可注册该model, 其他 model 同理
 
