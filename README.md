@@ -40,10 +40,16 @@
       increase(state) {
         return {...state, count: state.count + 1};
       },
+      // 外部使用 dispatch({type: 'global/add', payload: 3}) 调用该方法
+      add(state, action) {
+        return {...state, count: state.count + action.payload};
+      },
 
     },
 
     effects: {
+      // 外部使用 dispatch({type: 'global/login', payload: {user: 123, pwd: 234}}) 调用该方法
+      // put 为 调用 reducer, await call 调用 effect
       async login({payload}, {put, call}) {
         put({type: 'set', payload: {isFetchLogin: true}});
 
