@@ -14,6 +14,9 @@ const App = () => <Layout />;
 
 const Main = start(App);
 
+console.log(123);
+
+
 ReactDOM.render(
   <ErrorBoundary>
     <Suspense
